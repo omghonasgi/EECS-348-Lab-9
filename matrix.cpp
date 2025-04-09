@@ -21,35 +21,42 @@ public:
         return nums;
     }
 
-    static Matrix<DataType> read_from_file(string filename, int size, int type) {
-        fstream myfile(filename);
-        if (myfile.is_open()) {
-            string typeline;
-            string blank_line;
-            getline(myfile, typeline);
-            getline(myfile, blank_line); 
-            
-            vector<vector<DataType> > data;
-            for (size_t i = 0; i < size*2; ++i) {
-                string line; 
-                if (getline(myfile, line)) {
-                    stringstream ss(line);
-                    vector<DataType> row;
-                    DataType value;
+   static Matrix<DataType> read_from_file(string filename, int size, int type) {
+    fstream myfile(filename);
+    if (myfile.is_open()) {
+        string line;
+        getline(myfile, line); // Skip the first line (typeline)
 
-                    while(ss >> value) {
-                        row.push_back(value);
-                    } 
-
-                    data.push_back(row);
-                }
+        vector<vector<DataType> > data;
+        while (getline(myfile, line)) {
+            // Skip blank lines
+            if (line.empty()) {
+                continue;
             }
-            myfile.close();
-            return Matrix<DataType>(data);
+
+            stringstream ss(line);
+            vector<DataType> row;
+            DataType value;
+
+            while (ss >> value) {
+                row.push_back(value);
+            }
+
+            if (!row.empty()) {
+                data.push_back(row);
+            }
+
+            // Stop if we've read enough rows
+            if (data.size() >= static_cast<size_t>(size * 2)) {
+                break;
+            }
         }
-        return Matrix<DataType>();
+        myfile.close();
+        return Matrix<DataType>(data);
     }
-   
+    return Matrix<DataType>();
+}
+
     Matrix operator+(const Matrix &rhs) const{
         std::vector<std::vector<DataType> > data;
         for (size_t i = 0; i < nums.size(); ++i) {
@@ -215,73 +222,91 @@ int main() {
     }
 
     // print two matrices to ensure proper object creation
-    if (type == 0) {
-        mat1.print_matrix();
-        cout << endl;
-        mat2.print_matrix();
-        cout << endl;
+if (type == 0) {
+    cout << "1. Read values from a file into the matrix" << endl;
+    cout << "Matrix 1:" << endl;
+    mat1.print_matrix();
+    cout << endl;
+    cout << "Matrix 2:" << endl;
+    mat2.print_matrix();
+    cout << endl;
 
-        // 2. Add two matrices and display the result
-        Matrix<int> mat3 = mat1 + mat2;
-        mat3.print_matrix();
-        cout << endl;
+    // 2. Add two matrices and display the result
+    cout << "2. Add two matrices and display the result. Add Matrix 1 and Matrix 2." << endl;
+    Matrix<int> mat3 = mat1 + mat2;
+    mat3.print_matrix();
+    cout << endl;
 
-        // 3. Multiply two matrices and display the result
-        Matrix<int> mat4 = mat1 * mat2;
-        mat4.print_matrix();
-        cout << endl;
+    // 3. Multiply two matrices and display the result
+    cout << "3. Add two matrices and display the result. Multiply Matrix 1 and Matrix 2" << endl;
+    Matrix<int> mat4 = mat1 * mat2;
+    mat4.print_matrix();
+    cout << endl;
 
-        // 4. Get the sum of matrix diagonal elements
-        cout << mat1.sum_diagonal_major() + mat1.sum_diagonal_minor() << endl;
-        cout << endl;
+    // 4. Get the sum of matrix diagonal elements
+    cout << "4. Get the sum of matrix diagonal elements. Sum up the diagonals of matrix 1." << endl;
+    cout << mat1.sum_diagonal_major() + mat1.sum_diagonal_minor() << endl;
+    cout << endl;
 
-        // 5. Swap matrix rows and display the result
-        mat1.swap_rows(1, 2); // swap row indices 1 and 2
-        mat1.print_matrix();
-        cout << endl;
+    // 5. Swap matrix rows and display the result
+    cout << "5. Swap matrix rows and display the result. Swap row indices 1 and 2 on matrix 1." << endl;
+    mat1.swap_rows(1, 2); // swap row indices 1 and 2
+    mat1.print_matrix();
+    cout << endl;
 
-        // 6. Swap matrix columns and display the result
-        mat2.swap_cols(1, 2); // swap column indices 1 and 2
-        mat2.print_matrix();
-        cout << endl;
+    // 6. Swap matrix columns and display the result
+    cout << "6. Swap matrix columns and display the result. Swap column indices 1 and 2 on matrix 2." << endl;
+    mat2.swap_cols(1, 2); // swap column indices 1 and 2
+    mat2.print_matrix();
+    cout << endl;
 
-        // 7. Update matrix rows and display the result
-        mat1.update_matrix(1, 2, 17); // update row index 1, column index 2, of matrix 1 to 17
-        mat1.print_matrix();
-    } else {
-        mat1_double.print_matrix();
-        cout << endl;
-        mat2_double.print_matrix();
-        cout << endl;
+    // 7. Update matrix rows and display the result
+    cout << "7. Update matrix rows and display the result. Update row index 1, column index 2, of matrix 1 to 17" << endl;
+    mat1.update_matrix(1, 2, 17); // update row index 1, column index 2, of matrix 1 to 17
+    mat1.print_matrix();
+} else {
+    cout << "1. Read values from a file into the matrix" << endl;
+    cout << "Matrix 1:" << endl;
+    mat1_double.print_matrix();
+    cout << endl;
+    cout << "Matrix 2" << endl;
+    mat2_double.print_matrix();
+    cout << endl;
 
-        // 2. Add two matrices and display the result
-        Matrix<double> mat3 = mat1_double + mat2_double;
-        mat3.print_matrix();
-        cout << endl;
+    // 2. Add two matrices and display the result
+    cout << "2. Add two matrices and display the result. Add Matrix 1 and Matrix 2." << endl;
+    Matrix<double> mat3 = mat1_double + mat2_double;
+    mat3.print_matrix();
+    cout << endl;
 
-        // 3. Multiply two matrices and display the result
-        Matrix<double> mat4 = mat1_double * mat2_double;
-        mat4.print_matrix();
-        cout << endl;
+    // 3. Multiply two matrices and display the result
+    cout << "3. Add two matrices and display the result. Multiply Matrix 1 and Matrix 2" << endl;
+    Matrix<double> mat4 = mat1_double * mat2_double;
+    mat4.print_matrix();
+    cout << endl;
 
-        // 4. Get the sum of matrix diagonal elements
-        cout << mat1_double.sum_diagonal_major() + mat1_double.sum_diagonal_minor() << endl;
-        cout << endl;
+    // 4. Get the sum of matrix diagonal elements
+    cout << "4. Get the sum of matrix diagonal elements. Sum up the diagonals of matrix 1." << endl;
+    cout << mat1_double.sum_diagonal_major() + mat1_double.sum_diagonal_minor() << endl;
+    cout << endl;
 
-        // 5. Swap matrix rows and display the result
-        mat1_double.swap_rows(1, 2); // swap row indices 1 and 2
-        mat1_double.print_matrix();
-        cout << endl;
+    // 5. Swap matrix rows and display the result
+    cout << "5. Swap matrix rows and display the result. Swap row indices 1 and 2 on matrix 1." << endl;
+    mat1_double.swap_rows(1, 2); // swap row indices 1 and 2
+    mat1_double.print_matrix();
+    cout << endl;
 
-        // 6. Swap matrix columns and display the result
-        mat2_double.swap_cols(1, 2); // swap column indices 1 and 2
-        mat2_double.print_matrix();
-        cout << endl;
+    // 6. Swap matrix columns and display the result
+    cout << "6. Swap matrix columns and display the result. Swap column indices 1 and 2 on matrix 2." << endl;
+    mat2_double.swap_cols(1, 2); // swap column indices 1 and 2
+    mat2_double.print_matrix();
+    cout << endl;
 
-        // 7. Update matrix rows and display the result
-        mat1_double.update_matrix(1, 2, 17.7); // update row index 1, column index 2, of matrix 1 to 17
-        mat1_double.print_matrix();
-    }
+    // 7. Update matrix rows and display the result
+    cout << "7. Update matrix rows and display the result. Update row index 1, column index 2, of matrix 1 to 17.7" << endl;
+    mat1_double.update_matrix(1, 2, 17.7); // update row index 1, column index 2, of matrix 1 to 17.7
+    mat1_double.print_matrix();
+}
 
     return 0;
 }
